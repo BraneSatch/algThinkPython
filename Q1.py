@@ -9,15 +9,8 @@ import urllib2
 import matplotlib.pyplot as plt
 import math
 
-# Set timeout for CodeSkulptor if necessary
-# import codeskulptor
-# codeskulptor.set_timeout(20)
-
-
-###################################
-# Code for loading citation graph
-
 CITATION_URL = "http://storage.googleapis.com/codeskulptor-alg/alg_phys-cite.txt"
+number_of_nodes = 352768
 
 
 def compute_in_degrees(digraph):
@@ -80,34 +73,36 @@ def load_graph(graph_url):
     return answer_graph
 
 
-# citation_graph = load_graph(CITATION_URL)
-
 def plot_graph_distribution(graph):
     distribution = in_degree_distribution(graph)
+    print distribution
     y_values = []
     x_values = []
     sum = 0.0
-    max = 0.0
-
-    xrange = len(distribution);
+    max = 0
+    min = 1000.0
+    x_range = len(distribution);
 
     for i in distribution:
         sum += distribution[i]
 
     for i in distribution:
-        y_values.append(math.log10(distribution[i] / sum))
+        y_values.append(distribution[i] / sum)
         # Just to make our graph more clear on the plot
-        if math.log10(distribution[i] / sum) > max:
-            max = math.log10(distribution[i] / sum)
+        if distribution[i] / sum < min:
+            min = distribution[i] / sum
+        if distribution[i] / sum > max:
+            max = distribution[i] / sum
 
-    x_values = range(xrange)
-    for i in xrange(xrange):
-        x_values[i] = math.log10(x_values[i]);
 
-    plt.plot(x_values, y_values)
-    plt.axis([0, xrange, 0, max])
+    plt.figure(figsize=(1280/96, 800/96), dpi=96)
+    plt.plot(y_values, 'ro')
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.axis([0, 700, math.log(0.01), math.log(2)])
     plt.ylabel('Distribution normalized')
     plt.xlabel('Number of in-degrees')
+    plt.title('In-degree distribution plot from Question 1')
     plt.show()
 
 
